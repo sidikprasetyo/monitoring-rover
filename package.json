@@ -4,7 +4,8 @@
   "description": "Monitoring sensor on the rover",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "node server.js", 
+    "start-electron": "electron .",
     "dev": "nodemon --watch . --exec electron ."
   },
   "author": "Sidik Prasetyo",
