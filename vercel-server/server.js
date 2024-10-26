@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files (for your HTML, CSS, and JS)
-app.use(express.static('public'));
+// app.use(express.static('public'));
 
 // Setup Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -55,9 +55,9 @@ app.get('/api/sensor-data', async (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
 
 module.exports = app;
