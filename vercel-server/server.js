@@ -51,10 +51,4 @@ app.get('/api/sensor-data', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000; // 3000 sebagai default jika tidak ada port yang diberikan.
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
 module.exports = app;
