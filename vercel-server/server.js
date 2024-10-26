@@ -3,22 +3,20 @@ const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
-// Setup Express
 const app = express();
 
-// Allow CORS
 app.use(cors());
 app.use(express.json());
 
-// Serve static files (for your HTML, CSS, and JS)
-// app.use(express.static('public'));
-
-// Setup Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Generate and save dummy sensor data to Supabase every 5 seconds
+// Add root path handler
+app.get('/', (req, res) => {
+  res.json({ message: 'Server is running' });
+});
+
 setInterval(async () => {
   const sensorData = {
     temperature: parseFloat((Math.random() * 10 + 20).toFixed(1)),
@@ -28,7 +26,6 @@ setInterval(async () => {
     timestamp: new Date()
   };
 
-  // Save sensor data to Supabase
   const { error } = await supabase
     .from('sensor_data')
     .insert([sensorData]);
@@ -38,7 +35,6 @@ setInterval(async () => {
   }
 }, 5000);
 
-// Endpoint to get all sensor data
 app.get('/api/sensor-data', async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -54,10 +50,10 @@ app.get('/api/sensor-data', async (req, res) => {
   }
 });
 
-// Start server
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
+// Uncomment these lines
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
 module.exports = app;
