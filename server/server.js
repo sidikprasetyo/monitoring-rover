@@ -4,38 +4,34 @@ const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 // Add root path handler
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.json({ message: 'Server is running' });
 });
 
-setInterval(async () => {
-  const sensorData = {
-    temperature: parseFloat((Math.random() * 10 + 20).toFixed(1)),
-    humidity: parseFloat((Math.random() * 40 + 40).toFixed(1)),
-    carbonDioxide: parseFloat((Math.random() * 500 + 300).toFixed(1)),
-    ammonia: parseFloat((Math.random() * 30).toFixed(1)),
-    timestamp: new Date()
-  };
+// Endpoint esp32
+app.post('/api/sensor-data', async (req, res) => {
 
-  const { error } = await supabase
-    .from('sensor_data')
-    .insert([sensorData]);
+  try {
+    // Simpan data ke Supabase
+    const { error } = await supabase
+      .from('sensor_data')
+      .insert([req.body]);
 
-  if (error) {
+    if (error) throw error;
+    res.status(201).json({ message: 'Data saved successfully' });
+  } catch (error) {
     console.error('Error saving sensor data:', error);
+    res.status(500).json({ message: 'Failed to save data' });
   }
-}, 5000);
+});
 
-app.get('/api/sensor-data', async (req, res) => {
+app.get('/api/sensor-data', async (_, res) => {
   try {
     const { data, error } = await supabase
       .from('sensor_data')
@@ -43,7 +39,6 @@ app.get('/api/sensor-data', async (req, res) => {
       .order('timestamp', { ascending: false });
 
     if (error) throw error;
-
     res.json(data);
   } catch (error) {
     console.error('Error fetching data:', error);
